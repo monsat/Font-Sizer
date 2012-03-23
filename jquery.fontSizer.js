@@ -70,7 +70,7 @@
 	$.fn.fontSizer.resize = function(inc) {
 		var options = $.fn.fontSizer.options;
 		if (inc > 0 && isMax(inc) || inc < 0 && isMin(inc)) {
-			return;
+			return false;
 		}
 		// button
 		$('#' + options.controlPlusID).add('#' + options.controlMinusID).children().css(options.buttonStyles.enable);
@@ -83,6 +83,8 @@
 		$.fn.fontSizer.afterResize(inc);
 		// callback
 		options.callback(inc, beforeSize, options.baseSize);
+
+		return true;
 	}
 
 	$.fn.fontSizer.afterResize = function(inc) {
