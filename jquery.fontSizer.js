@@ -13,20 +13,18 @@
  *   http://www.opensource.org/licenses/GPL-3.0
  */
 (function($){
-	
-	$.fn.fontSizer = function(options) {
 
-		// allows user to override plugin defaults
-		options = $.fn.fontSizer.options = $.extend({}, $.fn.fontSizer.defaults, options);
+	var FontSizer = function(element, options) {
+		this.$element = $(element);
+		var options = this.options = $.extend({}, $.fn.fontSizer.defaults, options);
+		// base font size
 		options.baseSize = options.baseSize || parseInt($('body').css('font-size')) || options.defaultSize;
 		options.defaultSize = options.baseSize;
-		
 		// resize target
 		if (options.autoClass) {
 			options.container = '.' + options.textContainerClass;
 		}
 		options.$target = options.$target || $(options.elements, options.container);
-		
 		// adds font size controls to document
 		if (options.controls) {
 			$('#' + options.controlWrapID)
@@ -40,75 +38,99 @@
 					.append('<li></li>').children().eq(1)
 					.append('<a id="' + options.controlPlusID + '" href="#" title="Larger Text"></a>').children().eq(0)
 					.append('<img src="' + options.imageDir + 'plus.png" height="48" width="48" border="0" alt="Increase Text Size" />');
-		}				
-		
-		//console.log(options.baseSize);	
-
+		}
+		// bind
+		var Class = this;
 		$('#' + options.controlPlusID).click(function(e){
-			$.fn.fontSizer.resize(options.increment);
+			Class.resize(options.increment);
 			e.preventDefault();
 		});
 		$('#' + options.controlMinusID).click(function(e){
-			$.fn.fontSizer.resize(-1 * options.increment);
+			Class.resize(-1 * options.increment);
 			e.preventDefault();
 		});
-
-		return this;
-	};
-
-	function isMin(inc) {
-		var options = $.fn.fontSizer.options;
-		var size = options.baseSize + inc;
-		return size < options.minSize;
 	}
 
-	function isMax(inc) {
-		var options = $.fn.fontSizer.options;
-		var size = options.baseSize + inc;
-		return size > options.maxSize;
-	}
-
-	$.fn.fontSizer.resize = function(inc) {
-		var options = $.fn.fontSizer.options;
-		if (!inc || inc > 0 && isMax(inc) || inc < 0 && isMin(inc)) {
-			return false;
+	// methods
+	FontSizer.prototype = {
+		constructor: FontSizer
+		, resize: function(inc) {
+			if (!inc || inc > 0 && this.isMax(inc) || inc < 0 && this.isMin(inc)) {
+				return false;
+			}
+			// button
+			$('#' + this.options.controlPlusID).add('#' + this.options.controlMinusID).children().css(this.options.buttonStyles.enable);
+			// resize
+			this.options.$target.each(function(i, target){
+				$(target).css('font-size', parseInt($(target).css('font-size')) + inc + 'px');
+			});
+			var beforeSize = this.options.baseSize;
+			this.options.baseSize += inc;
+			this.afterResize(inc);
+			// callback
+			this.options.callback({inc: inc, before: beforeSize, after: this.options.baseSize});
+			// result
+			return true;
 		}
-		// button
-		$('#' + options.controlPlusID).add('#' + options.controlMinusID).children().css(options.buttonStyles.enable);
-		// resize
-		options.$target.each(function(i, target){
-			$(target).css('font-size', parseInt($(target).css('font-size')) + inc + 'px');
+		, afterResize: function(inc) {
+			if (this.isMin(inc)) {
+				$('#' + this.options.controlMinusID).children().css(this.options.buttonStyles.disable);
+			}
+			if (this.isMax(inc)) {
+				$('#' + this.options.controlPlusID).children().css(this.options.buttonStyles.disable);
+			}
+		}
+		, fontSize: function(size) {
+			if (size < this.options.minSize || size == 'min') {
+				size = this.options.minSize;
+			} else if (size > this.options.maxSize || size == 'max') {
+				size = this.options.maxSize;
+			} else if (typeof size == 'string') {
+				size = this.options.defaultSize;
+			}
+			return this.resize(size - this.options.baseSize);
+		}
+		, isMin: function(inc) {
+			//var options = $.fontSizer.options;
+			var size = this.options.baseSize + inc;
+			return size < this.options.minSize;
+		}
+		, isMax: function(inc) {
+			//var options = $.fontSizer.options;
+			var size = this.options.baseSize + inc;
+			return size > this.options.maxSize;
+		}
+	}
+
+	// internal
+
+	// definition
+	$.fn.fontSizer = function(option) {
+		return !!(function(){
+			var $this = $(this);
+			var data = $this.data('fontSizer');
+			var options = typeof option == 'object' && option;
+			if (!data) {
+				$this.data('fontSizer', (data = new FontSizer(this, options)));
+			}
+			if (typeof option == 'string') {
+				data[option]();
+			}
+		})();
+		return this.each(function(){
+			var $this = $(this);
+			var data = $this.data('fontSizer');
+			var options = typeof option == 'object' && option;
+			if (!data) {
+				$this.data('fontSizer', (data = new PluginName(this, options)));
+			}
+			if (typeof option == 'string') {
+				data[option]();
+			}
 		});
-		var beforeSize = options.baseSize;
-		options.baseSize += inc;
-		$.fn.fontSizer.afterResize(inc);
-		// callback
-		options.callback({inc: inc, before: beforeSize, after: options.baseSize});
-
-		return true;
-	}
-
-	$.fn.fontSizer.afterResize = function(inc) {
-		var options = $.fn.fontSizer.options;
-		if (isMin(inc)) {
-			$('#' + options.controlMinusID).children().css(options.buttonStyles.disable);
-		}
-		if (isMax(inc)) {
-			$('#' + options.controlPlusID).children().css(options.buttonStyles.disable);
-		}
-	}
-
-	$.fn.fontSizer.fontSize = function(size) {
-		var options = $.fn.fontSizer.options;
-		if (size < options.minSize || size == 'min') {
-			size = options.minSize;
-		} else if (size > options.maxSize || size == 'max') {
-			size = options.maxSize;
-		} else if (typeof size == 'string') {
-			size = options.defaultSize;
-		}
-		return $.fn.fontSizer.resize(size - options.baseSize);
-	}
+	};
+	// construct
+	$.fn.fontSizer.Contsructor = FontSizer;
 
 	// plugin default values
 	$.fn.fontSizer.defaults = {
