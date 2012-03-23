@@ -17,7 +17,7 @@
 	$.fn.fontSizer = function(options) {
 
 		// allows user to override plugin defaults
-		var options = $.extend({}, $.fn.fontSizer.defaults, options);
+		options = $.fn.fontSizer.options = $.extend({}, $.fn.fontSizer.defaults, options);
 		
 		// auto assign .sizeable class to elements in textContainer
 		if (options.autoClass) {
