@@ -78,8 +78,11 @@
 		options.$target.each(function(i, target){
 			$(target).css('font-size', parseInt($(target).css('font-size')) + inc + 'px');
 		});
+		var beforeSize = options.baseSize;
 		options.baseSize += inc;
 		$.fn.fontSizer.afterResize(inc);
+		// callback
+		options.callback(inc, beforeSize, options.baseSize);
 	}
 
 	$.fn.fontSizer.afterResize = function(inc) {
@@ -105,6 +108,9 @@
 		buttonStyles: {
 			enable: {opacity: '1.0'},
 			disable: {opacity: '0.5'}
+		},
+		callback: function(inc, before, after) {
+			// console.log(inc, before, after);
 		},
 		autoClass: true, // deprecated
 		textContainerClass: 'fs-text', // deprecated
