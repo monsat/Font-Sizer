@@ -24,10 +24,11 @@
 			baseSize: parseInt($('body').css('font-size')) || 12,
 			controlWrapID: 'control-wrap',
 			controls: true,
-			controlInnerHtml: '<ul id="controls"><li><a id="fs-minus" href="#" title="Smaller Text"><img src="images/minus.png" height="48" width="48" border="0" alt="Decrease Text Size" /></a></li><li><a id="fs-plus" href="#" title="Larger Text"><img src="images/plus.png" height="48" width="48" border="0" alt="Increase Text Size" /></a></li></ul><div class="clear-both"></div>',
+			imageDir: 'images/',
 			autoClass: true,
 			textContainerClass: 'fs-text',
 			elements: 'h1, h2, h3, h4, p, a, ul',
+			controlID: 'controls',
 			controlPlusID: 'fs-plus',
 			controlMinusID: 'fs-minus'
 		};
@@ -44,8 +45,17 @@
 		
 		// adds font size controls to document
 		if (options.controls) {
-			
-			$('#'+options.controlWrapID).html( options.controlInnerHtml );
+			$('#' + options.controlWrapID)
+				.append('<ul id="' + options.controlID + '"></ul>').children().eq(0)
+					// minus
+					.append('<li></li>').children().eq(0)
+					.append('<a id="' + options.controlMinusID + '" href="#" title="Smaller Text"></a>').children().eq(0)
+					.append('<img src="' + options.imageDir + 'minus.png" height="48" width="48" border="0" alt="Decrease Text Size" />')
+				.closest('ul')
+					// plus
+					.append('<li></li>').children().eq(1)
+					.append('<a id="' + options.controlPlusID + '" href="#" title="Larger Text"></a>').children().eq(0)
+					.append('<img src="' + options.imageDir + 'plus.png" height="48" width="48" border="0" alt="Increase Text Size" />');
 		}				
 		
 		//console.log(options.baseSize);	
