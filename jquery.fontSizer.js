@@ -19,6 +19,7 @@
 		// allows user to override plugin defaults
 		options = $.fn.fontSizer.options = $.extend({}, $.fn.fontSizer.defaults, options);
 		options.baseSize = options.baseSize || parseInt($('body').css('font-size')) || options.defaultSize;
+		options.defaultSize = options.baseSize;
 		
 		// resize target
 		if (options.autoClass) {
@@ -69,7 +70,7 @@
 
 	$.fn.fontSizer.resize = function(inc) {
 		var options = $.fn.fontSizer.options;
-		if (inc > 0 && isMax(inc) || inc < 0 && isMin(inc)) {
+		if (!inc || inc > 0 && isMax(inc) || inc < 0 && isMin(inc)) {
 			return false;
 		}
 		// button
@@ -95,6 +96,18 @@
 		if (isMax(inc)) {
 			$('#' + options.controlPlusID).children().css(options.buttonStyles.disable);
 		}
+	}
+
+	$.fn.fontSizer.fontSize = function(size) {
+		var options = $.fn.fontSizer.options;
+		if (size < options.minSize || size == 'min') {
+			size = options.minSize;
+		} else if (size > options.maxSize || size == 'max') {
+			size = options.maxSize;
+		} else if (typeof size == 'string') {
+			size = options.defaultSize;
+		}
+		return $.fn.fontSizer.resize(size - options.baseSize);
 	}
 
 	// plugin default values
