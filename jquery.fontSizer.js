@@ -24,6 +24,7 @@
 			baseSize: parseInt($('body').css('font-size')) || 12,
 			controlWrapID: 'control-wrap',
 			controls: true,
+			controlInnerHtml: '<ul id="controls"><li><a id="fs-minus" href="#" title="Smaller Text"><img src="images/minus.png" height="48" width="48" border="0" alt="Decrease Text Size" /></a></li><li><a id="fs-plus" href="#" title="Larger Text"><img src="images/plus.png" height="48" width="48" border="0" alt="Increase Text Size" /></a></li></ul><div class="clear-both"></div>',
 			autoClass: true,
 			textContainerClass: 'fs-text',
 			elements: 'h1, h2, h3, h4, p, a, ul',
@@ -44,7 +45,7 @@
 		// adds font size controls to document
 		if (options.controls) {
 			
-			$('#'+options.controlWrapID).html('<ul id="controls"><li><a id="fs-minus" href="#" title="Smaller Text"><img src="images/minus.png" height="48" width="48" border="0" alt="Decrease Text Size" /></a></li><li><a id="fs-plus" href="#" title="Larger Text"><img src="images/plus.png" height="48" width="48" border="0" alt="Increase Text Size" /></a></li></ul><div class="clear-both"></div>');
+			$('#'+options.controlWrapID).html( options.controlInnerHtml );
 		}				
 		
 		//console.log(options.baseSize);	
