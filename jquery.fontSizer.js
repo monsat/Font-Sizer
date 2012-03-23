@@ -73,17 +73,22 @@
 			return;
 		}
 		// button
-		$('#' + options.controlPlusID).add('#' + options.controlMinusID).children().css('opacity', 1.0);
+		$('#' + options.controlPlusID).add('#' + options.controlMinusID).children().css(options.buttonStyles.enable);
 		// resize
 		options.$target.each(function(i, target){
 			$(target).css('font-size', parseInt($(target).css('font-size')) + inc + 'px');
 		});
 		options.baseSize += inc;
+		$.fn.fontSizer.afterResize(inc);
+	}
+
+	$.fn.fontSizer.afterResize = function(inc) {
+		var options = $.fn.fontSizer.options;
 		if (isMin(inc)) {
-			$('#' + options.controlMinusID).children().css('opacity', 0.5);
+			$('#' + options.controlMinusID).children().css(options.buttonStyles.disable);
 		}
 		if (isMax(inc)) {
-			$('#' + options.controlPlusID).children().css('opacity', 0.5);
+			$('#' + options.controlPlusID).children().css(options.buttonStyles.disable);
 		}
 	}
 
@@ -97,6 +102,10 @@
 		controlWrapID: 'control-wrap',
 		controls: true,
 		imageDir: 'images/',
+		buttonStyles: {
+			enable: {opacity: '1.0'},
+			disable: {opacity: '0.5'}
+		},
 		autoClass: true, // deprecated
 		textContainerClass: 'fs-text', // deprecated
 		$target: null,
