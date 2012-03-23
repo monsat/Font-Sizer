@@ -82,7 +82,7 @@
 		options.baseSize += inc;
 		$.fn.fontSizer.afterResize(inc);
 		// callback
-		options.callback(inc, beforeSize, options.baseSize);
+		options.callback({inc: inc, before: beforeSize, after: options.baseSize});
 
 		return true;
 	}
@@ -111,8 +111,8 @@
 			enable: {opacity: '1.0'},
 			disable: {opacity: '0.5'}
 		},
-		callback: function(inc, before, after) {
-			// console.log(inc, before, after);
+		callback: function(size) {
+			// console.log(size.inc, size.before, size.after);
 		},
 		autoClass: true, // deprecated
 		textContainerClass: 'fs-text', // deprecated
