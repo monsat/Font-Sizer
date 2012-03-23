@@ -15,26 +15,9 @@
 (function($){
 	
 	$.fn.fontSizer = function(options) {
-						
-		// plugin default values
-		var defaults = {
-			maxSize: 18,			
-			minSize: 10,
-			increment: 2,
-			baseSize: parseInt($('body').css('font-size')) || 12,
-			controlWrapID: 'control-wrap',
-			controls: true,
-			imageDir: 'images/',
-			autoClass: true,
-			textContainerClass: 'fs-text',
-			elements: 'h1, h2, h3, h4, p, a, ul',
-			controlID: 'controls',
-			controlPlusID: 'fs-plus',
-			controlMinusID: 'fs-minus'
-		};
-			
+
 		// allows user to override plugin defaults
-		var options = $.extend({}, defaults, options);
+		var options = $.extend({}, $.fn.fontSizer.defaults, options);
 		
 		// auto assign .sizeable class to elements in textContainer
 		if (options.autoClass) {
@@ -125,5 +108,23 @@
 			
 			e.preventDefault();
 		});
+
+	};
+
+	// plugin default values
+	$.fn.fontSizer.defaults = {
+		maxSize: 18,
+		minSize: 10,
+		increment: 2,
+		baseSize: parseInt($('body').css('font-size')) || 12,
+		controlWrapID: 'control-wrap',
+		controls: true,
+		imageDir: 'images/',
+		autoClass: true,
+		textContainerClass: 'fs-text',
+		elements: 'h1, h2, h3, h4, p, a, ul',
+		controlID: 'controls',
+		controlPlusID: 'fs-plus',
+		controlMinusID: 'fs-minus'
 	};
 })(jQuery);
