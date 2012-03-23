@@ -41,75 +41,40 @@
 		}				
 		
 		//console.log(options.baseSize);	
-		
-		return this.live('click', function(e) {
-									
-			var $this = $(this);
-			var plusOrMinus = $(this).attr('id');
-						
-			switch (plusOrMinus)
-			{
-				case options.controlMinusID:
-					
-					if (options.baseSize > options.minSize) {
-						
-						// shows button as enabled
-						$('#'+options.controlPlusID).children().css('opacity', 1.0);
-						
-						// decreases font size by increment amount 
-						$.fn.fontSizer.resize(false);
-						
-						options.baseSize = options.baseSize - options.increment;
-						
-						// shows button as disabled
-						if (options.baseSize <= options.minSize) {
-							$this.children().css('opacity', 0.5);
-						}
-						//console.log(options.baseSize);
-					}										
-					
-					break;
-				
-				case options.controlPlusID:
-					
-					if (options.baseSize < options.maxSize) {
-						
-						// shows button as enabled
-						$('#'+options.controlMinusID).children().css('opacity', 1.0);
-						
-						// increases font size by increment amount 
-						$.fn.fontSizer.resize(true);
-						
-						options.baseSize = options.baseSize + options.increment;
-						
-						// shows button as disabled
-						if (options.baseSize >= options.maxSize) {
-							$this.children().css('opacity', 0.5);	
-						}
-						//console.log(options.baseSize);
-					}					
-					
-					break;
-					
-				default: 
-				
-					alert('Configuration Error:\n\nThe id attribute of this element is: ' +plusOrMinus+
-					'\rIt must match one of the values below.\n\ncontrolMinusID = ' +options.controlMinusID+
-					'\ncontrolPlusID = ' +options.controlPlusID);					
-				
-			}
-			
+
+		$('#' + options.controlPlusID).click(function(e){
+			$.fn.fontSizer.resize(true);
+			e.preventDefault();
+		});
+		$('#' + options.controlMinusID).click(function(e){
+			$.fn.fontSizer.resize(false);
 			e.preventDefault();
 		});
 
+		return this;
 	};
+
+	function resizable(isIncrement) {
+		var options = $.fn.fontSizer.options;
+		return isIncrement && options.baseSize <= options.maxSize || !isIncrement && options.baseSize >= options.minSize;
+	}
 
 	$.fn.fontSizer.resize = function(isIncrement) {
 		var options = $.fn.fontSizer.options;
+		if (!resizable(isIncrement)) {
+			return;
+		}
 		var inc = options.increment * (isIncrement ? 1 : -1);
+		// button
+		$('#' + options.controlPlusID).add('#' + options.controlMinusID).children().css('opacity', 1.0);
+		// resize
 		options.$target.each(function(i, target){
 			$(target).css('font-size', parseInt($(target).css('font-size')) + inc + 'px');
 		});
+		options.baseSize += inc;
+		if (!resizable(isIncrement)) {
+			$('#' + options[ isIncrement ? 'controlPlusID' : 'controlMinusID']).children().css('opacity', 0.5);
+		}
 	}
 
 	// plugin default values
