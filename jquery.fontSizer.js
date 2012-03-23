@@ -18,6 +18,7 @@
 
 		// allows user to override plugin defaults
 		options = $.fn.fontSizer.options = $.extend({}, $.fn.fontSizer.defaults, options);
+		options.baseSize = options.baseSize || parseInt($('body').css('font-size')) || options.defaultSize;
 		
 		// resize target
 		if (options.autoClass) {
@@ -43,28 +44,34 @@
 		//console.log(options.baseSize);	
 
 		$('#' + options.controlPlusID).click(function(e){
-			$.fn.fontSizer.resize(true);
+			$.fn.fontSizer.resize(options.increment);
 			e.preventDefault();
 		});
 		$('#' + options.controlMinusID).click(function(e){
-			$.fn.fontSizer.resize(false);
+			$.fn.fontSizer.resize(-1 * options.increment);
 			e.preventDefault();
 		});
 
 		return this;
 	};
 
-	function resizable(isIncrement) {
+	function isMin(inc) {
 		var options = $.fn.fontSizer.options;
-		return isIncrement && options.baseSize <= options.maxSize || !isIncrement && options.baseSize >= options.minSize;
+		var size = options.baseSize + inc;
+		return size < options.minSize;
 	}
 
-	$.fn.fontSizer.resize = function(isIncrement) {
+	function isMax(inc) {
 		var options = $.fn.fontSizer.options;
-		if (!resizable(isIncrement)) {
+		var size = options.baseSize + inc;
+		return size > options.maxSize;
+	}
+
+	$.fn.fontSizer.resize = function(inc) {
+		var options = $.fn.fontSizer.options;
+		if (inc > 0 && isMax(inc) || inc < 0 && isMin(inc)) {
 			return;
 		}
-		var inc = options.increment * (isIncrement ? 1 : -1);
 		// button
 		$('#' + options.controlPlusID).add('#' + options.controlMinusID).children().css('opacity', 1.0);
 		// resize
@@ -72,8 +79,11 @@
 			$(target).css('font-size', parseInt($(target).css('font-size')) + inc + 'px');
 		});
 		options.baseSize += inc;
-		if (!resizable(isIncrement)) {
-			$('#' + options[ isIncrement ? 'controlPlusID' : 'controlMinusID']).children().css('opacity', 0.5);
+		if (isMin(inc)) {
+			$('#' + options.controlMinusID).children().css('opacity', 0.5);
+		}
+		if (isMax(inc)) {
+			$('#' + options.controlPlusID).children().css('opacity', 0.5);
 		}
 	}
 
@@ -82,7 +92,8 @@
 		maxSize: 18,
 		minSize: 10,
 		increment: 2,
-		baseSize: parseInt($('body').css('font-size')) || 12,
+		baseSize: 0, // parseInt($('body').css('font-size'))
+		defaultSize: 16,
 		controlWrapID: 'control-wrap',
 		controls: true,
 		imageDir: 'images/',
