@@ -21,7 +21,7 @@
 			maxSize: 18,			
 			minSize: 10,
 			increment: 2,
-			baseSize: parseInt($('body').css('font-size')),
+			baseSize: parseInt($('body').css('font-size')) || 12,
 			controlWrapID: 'control-wrap',
 			controls: true,
 			autoClass: true,
@@ -40,21 +40,6 @@
 			$('.'+options.textContainerClass).find(options.elements).addClass('sizeable');			
 			
 		}
-		
-		// attempts to determine a base font size from document
-		// if not overridden, otherwise defaults to 12px if unsuccsessful
-		if (options.baseSize === null) {
-			
-			options.baseSize = 12;
-			//$('.sizeable').css('font-size', options.baseSize+'px');
-			//console.log(options.baseSize);
-		
-		} else if (isNaN(options.baseSize)) {
-						
-			options.baseSize = 12;
-			alert('The base font size could not be determined from the current document. A default value of 12px will be applied to all elements with a class of sizeable.\n\nThis can be changed by setting a font-size value for the body element in your stylesheet or by supplying a baseSize value when you initialize the plugin.'); 
-			
-		}		
 		
 		// adds font size controls to document
 		if (options.controls) {
