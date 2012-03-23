@@ -123,4 +123,5 @@
 		controlPlusID: 'fs-plus',
 		controlMinusID: 'fs-minus'
 	};
+
 })(jQuery);
