@@ -19,12 +19,11 @@
 		// allows user to override plugin defaults
 		options = $.fn.fontSizer.options = $.extend({}, $.fn.fontSizer.defaults, options);
 		
-		// auto assign .sizeable class to elements in textContainer
+		// resize target
 		if (options.autoClass) {
-			
-			$('.'+options.textContainerClass).find(options.elements).addClass('sizeable');			
-			
+			options.container = '.' + options.textContainerClass;
 		}
+		options.$target = options.$target || $(options.elements, options.container);
 		
 		// adds font size controls to document
 		if (options.controls) {
@@ -57,11 +56,8 @@
 						// shows button as enabled
 						$('#'+options.controlPlusID).children().css('opacity', 1.0);
 						
-						// iterates over each element with a class of .sizeable and decreases font size by increment amount 
-						$.each($('.sizeable'), function() {							
-							$(this).css('font-size', parseInt($(this).css('font-size')) - options.increment+'px');
-							//console.log(parseInt($(this).css('font-size')));
-						});						
+						// decreases font size by increment amount 
+						$.fn.fontSizer.resize(false);
 						
 						options.baseSize = options.baseSize - options.increment;
 						
@@ -81,11 +77,8 @@
 						// shows button as enabled
 						$('#'+options.controlMinusID).children().css('opacity', 1.0);
 						
-						// iterates over each element with a class of .sizeable and increases font size by increment amount 
-						$.each($('.sizeable'), function() {							
-							$(this).css('font-size', parseInt($(this).css('font-size')) + options.increment+'px');
-							//console.log(parseInt($(this).css('font-size')));
-						});							
+						// increases font size by increment amount 
+						$.fn.fontSizer.resize(true);
 						
 						options.baseSize = options.baseSize + options.increment;
 						
@@ -111,6 +104,14 @@
 
 	};
 
+	$.fn.fontSizer.resize = function(isIncrement) {
+		var options = $.fn.fontSizer.options;
+		var inc = options.increment * (isIncrement ? 1 : -1);
+		options.$target.each(function(i, target){
+			$(target).css('font-size', parseInt($(target).css('font-size')) + inc + 'px');
+		});
+	}
+
 	// plugin default values
 	$.fn.fontSizer.defaults = {
 		maxSize: 18,
@@ -120,8 +121,10 @@
 		controlWrapID: 'control-wrap',
 		controls: true,
 		imageDir: 'images/',
-		autoClass: true,
-		textContainerClass: 'fs-text',
+		autoClass: true, // deprecated
+		textContainerClass: 'fs-text', // deprecated
+		$target: null,
+		container: '.fs-text',
 		elements: 'h1, h2, h3, h4, p, a, ul',
 		controlID: 'controls',
 		controlPlusID: 'fs-plus',
