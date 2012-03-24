@@ -31,15 +31,7 @@
 		// adds font size controls to document
 		options.controls && this.createResizeButtons();
 		// bind
-		var Class = this;
-		$('#' + options.controlPlusID).click(function(e){
-			Class.resize(options.increment);
-			e.preventDefault();
-		});
-		$('#' + options.controlMinusID).click(function(e){
-			Class.resize(-1 * options.increment);
-			e.preventDefault();
-		});
+		this.bindControls();
 	}
 
 	// methods
@@ -101,6 +93,17 @@
 					.append('<li></li>').children().eq(1)
 					.append('<a id="' + this.options.controlPlusID + '" href="#" title="Larger Text"></a>').children().eq(0)
 					.append('<img src="' + this.options.imageDir + 'plus.png" height="48" width="48" border="0" alt="Increase Text Size" />');
+		}
+		, bindControls: function() {
+			var _this = this;
+			$('#' + _this.options.controlPlusID).click(function(e){
+				_this.resize(_this.options.increment);
+				e.preventDefault();
+			});
+			$('#' + _this.options.controlMinusID).click(function(e){
+				_this.resize(-1 * _this.options.increment);
+				e.preventDefault();
+			});
 		}
 	}
 
