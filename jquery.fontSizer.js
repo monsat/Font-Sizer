@@ -12,7 +12,7 @@
  *
  * Version: 1.0.0 (08/10/2011) by Aaron Tennyson
  * Version: 2.0.0 (03/24/2012) by mon_sat
- * Requires: jQuery v1.3+
+ * Requires: jQuery v1.7+
  *
  * Dual licensed under the MIT and GPL licenses:
  *   http://www.opensource.org/licenses/mit-license.php
@@ -29,43 +29,52 @@
 		// resize target
 		options.$target = options.$target || $(options.elements, options.container);
 		// adds font size controls to document
-		options.controls && this.createResizeButtons();
-		// bind
-		this.bindControls();
+		options.controls && createResizeButtons($('#' + options.controlWrapID), options);
 	}
 
 	// methods
 	FontSizer.prototype = {
 		constructor: FontSizer
-		, resize: function(inc) {
+		, resize: function(inc, size) {
 			if (!inc || inc > 0 && this.isMax(inc) || inc < 0 && this.isMin(inc)) {
 				return false;
 			}
 			// button
-			$(this.options.triggers).children().andSelf().css(this.options.buttonStyles.enable);
+			$( '[' + this.options.triggers.inc + ']' ).add( '[' + this.options.triggers.size + ']' ).children().andSelf()
+				.css(this.options.buttonStyles.enable);
 			// resize
 			this.options.$target.each(function(i, target){
 				$(target).css('font-size', parseInt($(target).css('font-size')) + inc + 'px');
 			});
 			var beforeSize = this.options.baseSize;
-			this.options.baseSize += inc;
-			this.afterResize(inc);
+			this.options.baseSize = size;
+			this.afterResize(inc, size);
 			// callback
-			this.options.callback({inc: inc, before: beforeSize, after: this.options.baseSize});
+			this.options.callback({inc: inc, before: beforeSize, after: size});
 			// result
 			return true;
 		}
-		, afterResize: function(inc) {
+		, afterResize: function(inc, size) {
 			var _this = this;
-			$(this.options.triggers).each(function(){
-				if (_this.isMin(inc) && parseInt($(this).attr(_this.options.attr)) < 0) {
-					$(this).children().andSelf().css(_this.options.buttonStyles.disable);
+			var _options = _this.options;
+			var _triggers = _options.triggers;
+			$( '[' + _options.triggers.inc + ']' ).each(function(){
+				var _inc = parseInt($(this).attr( _triggers.inc ));
+				if (_this.isMin(inc) && _inc < 0 || _this.isMax(inc) && _inc > 0) {
+					$(this).children().andSelf().css(_options.buttonStyles.disable);
 				}
-				if (_this.isMax(inc) && parseInt($(this).attr(_this.options.attr)) > 0) {
-					$(this).children().andSelf().css(_this.options.buttonStyles.disable);
+			});
+			$( '[' + _options.triggers.size + ']' ).each(function(){
+				var _size = $(this).attr( _triggers.size );
+				_size = isNaN(_size) ? _size : parseInt(size);
+				if (size <= _size && (_size == 'min' || _size == _options.minSize)) {
+					$(this).children().andSelf().css(_options.buttonStyles.disable);
 				}
-				if (_this.isDefault() && parseInt($(this).attr(_this.options.attr)) == 0) {
-					$(this).children().andSelf().css(_this.options.buttonStyles.disable);
+				if (size <= _size && (_size == 'default' || _size == _options.defaultSize)) {
+					$(this).children().andSelf().css(_options.buttonStyles.disable);
+				}
+				if (size <= _size && (_size == 'max' || _size == _options.maxSize)) {
+					$(this).children().andSelf().css(_options.buttonStyles.disable);
 				}
 			});
 		}
@@ -74,10 +83,10 @@
 				size = this.options.minSize;
 			} else if (size > this.options.maxSize || size == 'max') {
 				size = this.options.maxSize;
-			} else if (typeof size == 'string') {
-				size = this.options.defaultSize;
+			} else {
+				size = isNaN(size) ? this.options.defaultSize : parseInt(size);
 			}
-			return this.resize(size - this.options.baseSize);
+			return this.resize(size - this.options.baseSize, size);
 		}
 		, isMin: function(inc) {
 			var size = this.options.baseSize + inc;
@@ -90,43 +99,48 @@
 			var size = this.options.baseSize + inc;
 			return size > this.options.maxSize;
 		}
-		, createResizeButtons: function() {
-			$('#' + this.options.controlWrapID)
-				.append('<ul id="' + this.options.controlID + '"></ul>').children().eq(0)
-					// minus
-					.append('<li></li>').children().eq(0)
-					.append('<a id="' + this.options.controlMinusID + '" href="#" title="Smaller Text"></a>').children().eq(0)
-					.append('<img src="' + this.options.imageDir + 'minus.png" ' + this.options.attr + '="' + -1 * this.options.increment  + '" height="48" width="48" border="0" alt="Decrease Text Size" />')
-				.closest('ul')
-					// plus
-					.append('<li></li>').children().eq(1)
-					.append('<a id="' + this.options.controlPlusID + '" href="#" title="Larger Text"></a>').children().eq(0)
-					.append('<img src="' + this.options.imageDir + 'plus.png" ' + this.options.attr + '="' + this.options.increment  + '" height="48" width="48" border="0" alt="Increase Text Size" />');
-		}
-		, bindControls: function() {
-			var _this = this;
-			$(this.options.triggers).click(function(e){
-				var size = $(this).attr(_this.options.attr);
-				size = isNaN(size) ? size : _this.options.baseSize + parseInt(size);
-				_this.fontSize(size);
-				e.preventDefault();
-			});
-		}
 	}
 
 	// internal
+	var createResizeButtons = function($target, _options) {
+		var _options = _options || $.fn.fontSizer.defaults;
+		$target = $target || $('#' + _options.controlWrapID);
+		if ($target.html().length) {
+			return false;
+		}
+		$target.append('<ul id="' + _options.controlID + '"></ul>').children().eq(0)
+			// minus
+			.append('<li></li>').children().eq(0)
+			.append('<a id="' + _options.controlMinusID + '" href="#" title="Smaller Text"></a>').children().eq(0)
+			.append('<img src="' + _options.imageDir + 'minus.png" ' + _options.triggers.inc + '="-' + _options.increment  + '" height="48" width="48" border="0" alt="Decrease Text Size" />')
+		.closest('ul')
+			// plus
+			.append('<li></li>').children().eq(1)
+			.append('<a id="' + _options.controlPlusID + '" href="#" title="Larger Text"></a>').children().eq(0)
+			.append('<img src="' + _options.imageDir + 'plus.png" ' + _options.triggers.inc + '="+' + _options.increment  + '" height="48" width="48" border="0" alt="Increase Text Size" />');
+	}
 
 	// definition
 	$.fn.fontSizer = function(option) {
 		return this.each(function(){
 			var $this = $(this);
-			var data = $this.data('fontSizer');
+			var data = $('body').data('fontSizer');
 			var options = typeof option == 'object' && option;
 			if (!data) {
-				$this.data('fontSizer', (data = new FontSizer(this, options)));
+				$('body').data('fontSizer', (data = new FontSizer(this, options)));
 			}
-			if (typeof option != 'object') {
-				data.fontSize(option);
+			if (typeof option == 'string') {
+				var prefix = option.substring(0, 1);
+				if (prefix  == '+' || prefix  == '-') {
+					option = data.options.baseSize + parseInt(option);
+				} else if (isNaN(option)) {
+					var _keys = {
+						min: data.options.minSize,
+						max: data.options.maxSize
+					};
+					option = _keys[option] || data.options.defaultSize;
+				}
+				data.fontSize(option || data.options.defaultSize);
 			}
 		});
 	};
@@ -147,8 +161,11 @@
 		callback: function(size) {
 			// console.log(size.inc, size.before, size.after);
 		},
-		triggers: '[data-fontsizer]',
-		attr: 'data-fontsizer',
+		triggers: {
+			wrapper: 'data-fontsizer-wrapper',
+			inc: 'data-fontsizer-inc',
+			size: 'data-fontsizer-size'
+		},
 		container: '.fs-text',
 		elements: 'h1, h2, h3, h4, p, a, ul',
 		// deprecated
@@ -162,5 +179,20 @@
 		controlPlusID: 'fs-plus',
 		controlMinusID: 'fs-minus'
 	};
+
+	$(function(){
+		var _triggers = $.fn.fontSizer.defaults.triggers;
+		// automatic create buttons
+		$wrapper = $( '[' + _triggers.wrapper + ']' );
+		if ($wrapper.length) {
+			createResizeButtons($wrapper);
+		}
+		// automatic font resize
+		$('body').on('click', '[' + _triggers.inc + ']' + ', ' + '[' + _triggers.size + ']', function(e){
+			var option = $(this).attr(_triggers.inc) || $(this).attr(_triggers.size);
+			$(this).fontSizer(option);
+			e.preventDefault();
+		});
+	});
 
 })(jQuery);
