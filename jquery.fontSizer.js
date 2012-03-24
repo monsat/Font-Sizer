@@ -60,7 +60,7 @@
 			var _triggers = _options.triggers;
 			$( '[' + _options.triggers.inc + ']' ).each(function(){
 				var _inc = parseInt($(this).attr( _triggers.inc ));
-				if (_this.isMin(inc) && _inc < 0 || _this.isMax(inc) && _inc > 0) {
+				if (_this.isMin(_inc) && _inc < 0 || _this.isMax(_inc) && _inc > 0) {
 					$(this).children().andSelf().css(_options.buttonStyles.disable);
 				}
 			});
