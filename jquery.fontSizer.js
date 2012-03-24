@@ -187,7 +187,7 @@
 			createResizeButtons($wrapper);
 		}
 		// automatic font resize
-		$('body').on('click', '[' + _triggers.inc + ']' + ', ' + '[' + _triggers.size + ']', function(e){
+		$('body').on('click.fontSizer.data-api', '[' + _triggers.inc + ']' + ', ' + '[' + _triggers.size + ']', function(e){
 			var option = $(this).attr(_triggers.inc) || $(this).attr(_triggers.size);
 			$(this).fontSizer(option);
 			e.preventDefault();
