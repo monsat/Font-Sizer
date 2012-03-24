@@ -129,9 +129,8 @@
 			if (!data) {
 				$('body').data('fontSizer', (data = new FontSizer(this, options)));
 			}
-			if (typeof option == 'string') {
-				var prefix = option.substring(0, 1);
-				if (prefix  == '+' || prefix  == '-') {
+			if (typeof option == 'number' || typeof option == 'string') {
+				if (typeof option == 'string' && (option.substring(0, 1) == '+' || option.substring(0, 1) == '-')) {
 					option = data.options.baseSize + parseInt(option);
 				} else if (isNaN(option)) {
 					var _keys = {
