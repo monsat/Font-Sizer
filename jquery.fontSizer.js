@@ -133,9 +133,6 @@
 		increment: 2,
 		baseSize: 0, // parseInt($('body').css('font-size'))
 		defaultSize: 16,
-		controlWrapID: 'control-wrap',
-		controls: true,
-		imageDir: 'images/',
 		buttonStyles: {
 			enable: {opacity: '1.0'},
 			disable: {opacity: '0.5'}
@@ -143,11 +140,15 @@
 		callback: function(size) {
 			// console.log(size.inc, size.before, size.after);
 		},
-		autoClass: true, // deprecated
-		textContainerClass: 'fs-text', // deprecated
-		$target: null,
 		container: '.fs-text',
 		elements: 'h1, h2, h3, h4, p, a, ul',
+		// deprecated
+		controls: true,
+		imageDir: 'images/',
+		controlWrapID: 'control-wrap',
+		autoClass: true,
+		textContainerClass: 'fs-text',
+		$target: null,
 		controlID: 'controls',
 		controlPlusID: 'fs-plus',
 		controlMinusID: 'fs-minus'
