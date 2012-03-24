@@ -1,11 +1,17 @@
 /*
  * Font Sizer - A jQuery Plugin
  *
+ * Version 1.x
  * Examples and documentation at: <http://www.codecompendium.com/tutorials/plugins/>
  *
- * Copyright 2011 Aaron Tennyson <http://www.aarontennyson.com/>
+ * Version 2.x
+ * Examples and documentation at: <https://github.com/monsat/Font-Sizer>
  *
- * Version: 1.0.0 (08/10/2011)
+ * Copyright 2011 Aaron Tennyson <http://www.aarontennyson.com/>
+ * Copyright 2012 mon_sat <http://www.direct-search.jp/>
+ *
+ * Version: 1.0.0 (08/10/2011) by Aaron Tennyson
+ * Version: 2.0.0 (03/24/2012) by mon_sat
  * Requires: jQuery v1.3+
  *
  * Dual licensed under the MIT and GPL licenses:
