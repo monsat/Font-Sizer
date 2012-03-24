@@ -42,7 +42,7 @@
 				return false;
 			}
 			// button
-			$('#' + this.options.controlPlusID).add('#' + this.options.controlMinusID).children().css(this.options.buttonStyles.enable);
+			$(this.options.triggers).children().andSelf().css(this.options.buttonStyles.enable);
 			// resize
 			this.options.$target.each(function(i, target){
 				$(target).css('font-size', parseInt($(target).css('font-size')) + inc + 'px');
@@ -56,12 +56,18 @@
 			return true;
 		}
 		, afterResize: function(inc) {
-			if (this.isMin(inc)) {
-				$('#' + this.options.controlMinusID).children().css(this.options.buttonStyles.disable);
-			}
-			if (this.isMax(inc)) {
-				$('#' + this.options.controlPlusID).children().css(this.options.buttonStyles.disable);
-			}
+			var _this = this;
+			$(this.options.triggers).each(function(){
+				if (_this.isMin(inc) && parseInt($(this).attr(_this.options.attr)) < 0) {
+					$(this).children().andSelf().css(_this.options.buttonStyles.disable);
+				}
+				if (_this.isMax(inc) && parseInt($(this).attr(_this.options.attr)) > 0) {
+					$(this).children().andSelf().css(_this.options.buttonStyles.disable);
+				}
+				if (_this.isDefault() && parseInt($(this).attr(_this.options.attr)) == 0) {
+					$(this).children().andSelf().css(_this.options.buttonStyles.disable);
+				}
+			});
 		}
 		, fontSize: function(size) {
 			if (size < this.options.minSize || size == 'min') {
@@ -77,6 +83,9 @@
 			var size = this.options.baseSize + inc;
 			return size < this.options.minSize;
 		}
+		, isDefault: function() {
+			return this.options.baseSize == this.options.defaultSize;
+		}
 		, isMax: function(inc) {
 			var size = this.options.baseSize + inc;
 			return size > this.options.maxSize;
@@ -87,21 +96,19 @@
 					// minus
 					.append('<li></li>').children().eq(0)
 					.append('<a id="' + this.options.controlMinusID + '" href="#" title="Smaller Text"></a>').children().eq(0)
-					.append('<img src="' + this.options.imageDir + 'minus.png" height="48" width="48" border="0" alt="Decrease Text Size" />')
+					.append('<img src="' + this.options.imageDir + 'minus.png" ' + this.options.attr + '="' + -1 * this.options.increment  + '" height="48" width="48" border="0" alt="Decrease Text Size" />')
 				.closest('ul')
 					// plus
 					.append('<li></li>').children().eq(1)
 					.append('<a id="' + this.options.controlPlusID + '" href="#" title="Larger Text"></a>').children().eq(0)
-					.append('<img src="' + this.options.imageDir + 'plus.png" height="48" width="48" border="0" alt="Increase Text Size" />');
+					.append('<img src="' + this.options.imageDir + 'plus.png" ' + this.options.attr + '="' + this.options.increment  + '" height="48" width="48" border="0" alt="Increase Text Size" />');
 		}
 		, bindControls: function() {
 			var _this = this;
-			$('#' + _this.options.controlPlusID).click(function(e){
-				_this.resize(_this.options.increment);
-				e.preventDefault();
-			});
-			$('#' + _this.options.controlMinusID).click(function(e){
-				_this.resize(-1 * _this.options.increment);
+			$(this.options.triggers).click(function(e){
+				var size = $(this).attr(_this.options.attr);
+				size = isNaN(size) ? size : _this.options.baseSize + parseInt(size);
+				_this.fontSize(size);
 				e.preventDefault();
 			});
 		}
@@ -140,6 +147,8 @@
 		callback: function(size) {
 			// console.log(size.inc, size.before, size.after);
 		},
+		triggers: '[data-fontsizer]',
+		attr: 'data-fontsizer',
 		container: '.fs-text',
 		elements: 'h1, h2, h3, h4, p, a, ul',
 		// deprecated
