@@ -21,9 +21,6 @@
 		options.baseSize = options.baseSize || parseInt($('body').css('font-size')) || options.defaultSize;
 		options.defaultSize = options.baseSize;
 		// resize target
-		if (options.autoClass) {
-			options.container = '.' + options.textContainerClass;
-		}
 		options.$target = options.$target || $(options.elements, options.container);
 		// adds font size controls to document
 		if (options.controls) {
@@ -91,12 +88,10 @@
 			return this.resize(size - this.options.baseSize);
 		}
 		, isMin: function(inc) {
-			//var options = $.fontSizer.options;
 			var size = this.options.baseSize + inc;
 			return size < this.options.minSize;
 		}
 		, isMax: function(inc) {
-			//var options = $.fontSizer.options;
 			var size = this.options.baseSize + inc;
 			return size > this.options.maxSize;
 		}
@@ -106,26 +101,15 @@
 
 	// definition
 	$.fn.fontSizer = function(option) {
-		return !!(function(){
+		return this.each(function(){
 			var $this = $(this);
 			var data = $this.data('fontSizer');
 			var options = typeof option == 'object' && option;
 			if (!data) {
 				$this.data('fontSizer', (data = new FontSizer(this, options)));
 			}
-			if (typeof option == 'string') {
-				data[option]();
-			}
-		})();
-		return this.each(function(){
-			var $this = $(this);
-			var data = $this.data('fontSizer');
-			var options = typeof option == 'object' && option;
-			if (!data) {
-				$this.data('fontSizer', (data = new PluginName(this, options)));
-			}
-			if (typeof option == 'string') {
-				data[option]();
+			if (typeof option != 'object') {
+				data.fontSize(option);
 			}
 		});
 	};
