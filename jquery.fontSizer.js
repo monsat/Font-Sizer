@@ -29,19 +29,7 @@
 		// resize target
 		options.$target = options.$target || $(options.elements, options.container);
 		// adds font size controls to document
-		if (options.controls) {
-			$('#' + options.controlWrapID)
-				.append('<ul id="' + options.controlID + '"></ul>').children().eq(0)
-					// minus
-					.append('<li></li>').children().eq(0)
-					.append('<a id="' + options.controlMinusID + '" href="#" title="Smaller Text"></a>').children().eq(0)
-					.append('<img src="' + options.imageDir + 'minus.png" height="48" width="48" border="0" alt="Decrease Text Size" />')
-				.closest('ul')
-					// plus
-					.append('<li></li>').children().eq(1)
-					.append('<a id="' + options.controlPlusID + '" href="#" title="Larger Text"></a>').children().eq(0)
-					.append('<img src="' + options.imageDir + 'plus.png" height="48" width="48" border="0" alt="Increase Text Size" />');
-		}
+		options.controls && this.createResizeButtons();
 		// bind
 		var Class = this;
 		$('#' + options.controlPlusID).click(function(e){
@@ -100,6 +88,19 @@
 		, isMax: function(inc) {
 			var size = this.options.baseSize + inc;
 			return size > this.options.maxSize;
+		}
+		, createResizeButtons: function() {
+			$('#' + this.options.controlWrapID)
+				.append('<ul id="' + this.options.controlID + '"></ul>').children().eq(0)
+					// minus
+					.append('<li></li>').children().eq(0)
+					.append('<a id="' + this.options.controlMinusID + '" href="#" title="Smaller Text"></a>').children().eq(0)
+					.append('<img src="' + this.options.imageDir + 'minus.png" height="48" width="48" border="0" alt="Decrease Text Size" />')
+				.closest('ul')
+					// plus
+					.append('<li></li>').children().eq(1)
+					.append('<a id="' + this.options.controlPlusID + '" href="#" title="Larger Text"></a>').children().eq(0)
+					.append('<img src="' + this.options.imageDir + 'plus.png" height="48" width="48" border="0" alt="Increase Text Size" />');
 		}
 	}
 
