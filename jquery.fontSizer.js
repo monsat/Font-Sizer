@@ -166,7 +166,7 @@
 			size: 'data-fontsizer-size'
 		},
 		container: '.fs-text',
-		elements: 'h1, h2, h3, h4, p, a, ul',
+		elements: 'h1, h2, h3, h4, p, ul',
 		// deprecated
 		controls: true,
 		imageDir: 'images/',
