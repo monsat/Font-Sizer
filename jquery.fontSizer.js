@@ -168,7 +168,7 @@
 		container: '.fs-text',
 		elements: 'h1, h2, h3, h4, p, ul',
 		// deprecated
-		controls: true,
+		controls: false,
 		imageDir: 'images/',
 		controlWrapID: 'control-wrap',
 		autoClass: true,
