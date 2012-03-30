@@ -161,7 +161,6 @@
 			// console.log(size.inc, size.before, size.after);
 		},
 		triggers: {
-			wrapper: 'data-fontsizer-wrapper',
 			inc: 'data-fontsizer-inc',
 			size: 'data-fontsizer-size'
 		},
@@ -171,7 +170,6 @@
 		controls: false,
 		imageDir: 'images/',
 		controlWrapID: 'control-wrap',
-		autoClass: true,
 		textContainerClass: 'fs-text',
 		$target: null,
 		controlID: 'controls',
