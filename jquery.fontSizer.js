@@ -27,7 +27,7 @@
 		options.baseSize = options.baseSize || parseInt($('body').css('font-size')) || options.defaultSize;
 		options.defaultSize = options.baseSize;
 		// resize target
-		options.$target = options.$target || $(options.elements, options.container);
+		options.$target = options.$target || $(options.elements, this.$element);
 		// adds font size controls to document
 		options.controls && createResizeButtons($('#' + options.controlWrapID), options);
 	}
@@ -165,7 +165,6 @@
 			inc: 'data-fontsizer-inc',
 			size: 'data-fontsizer-size'
 		},
-		container: '.fs-text',
 		elements: 'h1, h2, h3, h4, p, ul',
 		// deprecated
 		controls: true,
