@@ -17,7 +17,8 @@
 
 ## Requires
 
-- jQuery v1.3+
+- jQuery v1.3+ (Version 1.x)
+- jQuery v1.7+ (Version 2.x)
 
 ## Dual licensed under the MIT and GPL licenses:
 
