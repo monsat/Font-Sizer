@@ -129,7 +129,7 @@
 		if (!$target.length) {
 			$target = $('.' + (option && option.textContainerClass || $.fn.fontSizer.defaults.textContainerClass));
 		}
-		return $target.each(function(){
+		$target.each(function(){
 			var data = $target.data('fontSizer');
 			var options = typeof option == 'object' && option;
 			if (!data) {
@@ -148,6 +148,7 @@
 				data.fontSize(option || data.options.defaultSize);
 			}
 		});
+		return $(this);
 	};
 	// construct
 	$.fn.fontSizer.Contsructor = FontSizer;
