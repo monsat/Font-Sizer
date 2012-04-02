@@ -20,16 +20,18 @@
  */
 (function($){
 
-	var FontSizer = function(element, options) {
-		this.$element = $(element);
+	var FontSizer = function($element, options) {
 		var options = this.options = $.extend({}, $.fn.fontSizer.defaults, options);
 		// base font size
 		options.baseSize = options.baseSize || parseInt($('body').css('font-size')) || options.defaultSize;
 		options.defaultSize = options.baseSize;
 		// resize target
-		options.$target = options.$target || $(options.elements, options.container);
+		options.$target = options.$target || $(options.elements, $element);
 		// adds font size controls to document
-		options.controls && createResizeButtons($('#' + options.controlWrapID), options);
+		if (options.controls) {
+			$wrapper = $( '#' + options.controlWrapID );
+			$wrapper.length && createResizeButtons($wrapper, options);
+		}
 	}
 
 	// methods
@@ -112,22 +114,26 @@
 			// minus
 			.append('<li></li>').children().eq(0)
 			.append('<a id="' + _options.controlMinusID + '" href="#" title="Smaller Text"></a>').children().eq(0)
-			.append('<img src="' + _options.imageDir + 'minus.png" ' + _options.triggers.inc + '="-' + _options.increment  + '" height="48" width="48" border="0" alt="Decrease Text Size" />')
+			.append('<img src="' + _options.imageDir + 'minus.png" ' + _options.triggers.inc + '="-' + _options.increment  + '" data-target=".' + _options.textContainerClass + '" height="48" width="48" border="0" alt="Decrease Text Size" />')
 		.closest('ul')
 			// plus
 			.append('<li></li>').children().eq(1)
 			.append('<a id="' + _options.controlPlusID + '" href="#" title="Larger Text"></a>').children().eq(0)
-			.append('<img src="' + _options.imageDir + 'plus.png" ' + _options.triggers.inc + '="+' + _options.increment  + '" height="48" width="48" border="0" alt="Increase Text Size" />');
+			.append('<img src="' + _options.imageDir + 'plus.png" ' + _options.triggers.inc + '="+' + _options.increment  + '" data-target=".' + _options.textContainerClass + '" height="48" width="48" border="0" alt="Increase Text Size" />');
 	}
 
 	// definition
 	$.fn.fontSizer = function(option) {
-		return this.each(function(){
-			var $this = $(this);
-			var data = $('body').data('fontSizer');
+		var $target = $(this);
+		// for old version
+		if (!$target.length) {
+			$target = $('.' + (option && option.textContainerClass || $.fn.fontSizer.defaults.textContainerClass));
+		}
+		return $target.each(function(){
+			var data = $target.data('fontSizer');
 			var options = typeof option == 'object' && option;
 			if (!data) {
-				$('body').data('fontSizer', (data = new FontSizer(this, options)));
+				$target.data('fontSizer', (data = new FontSizer($target, options)));
 			}
 			if (typeof option == 'number' || typeof option == 'string') {
 				if (typeof option == 'string' && (option.substring(0, 1) == '+' || option.substring(0, 1) == '-')) {
@@ -164,7 +170,7 @@
 			inc: 'data-fontsizer-inc',
 			size: 'data-fontsizer-size'
 		},
-		container: '.fs-text',
+		$target: null,
 		elements: 'h1, h2, h3, h4, p, ul',
 		// deprecated
 		controls: false,
@@ -179,15 +185,12 @@
 
 	$(function(){
 		var _triggers = $.fn.fontSizer.defaults.triggers;
-		// automatic create buttons
-		$wrapper = $( '[' + _triggers.wrapper + ']' );
-		if ($wrapper.length) {
-			createResizeButtons($wrapper);
-		}
 		// automatic font resize
 		$('body').on('click.fontSizer.data-api', '[' + _triggers.inc + ']' + ', ' + '[' + _triggers.size + ']', function(e){
-			var option = $(this).attr(_triggers.inc) || $(this).attr(_triggers.size);
-			$(this).fontSizer(option);
+			var $this = $(this);
+			var option = $this.attr(_triggers.inc) || $this.attr(_triggers.size);
+			var $target = $($this.attr('data-target'));
+			$target.fontSizer(option);
 			e.preventDefault();
 		});
 	});
