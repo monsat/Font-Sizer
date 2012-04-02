@@ -173,7 +173,7 @@
 		$target: null,
 		elements: 'h1, h2, h3, h4, p, ul',
 		// deprecated
-		controls: false,
+		controls: true,
 		imageDir: 'images/',
 		controlWrapID: 'control-wrap',
 		textContainerClass: 'fs-text',
